@@ -9,8 +9,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,15 +42,18 @@ public class ClientPactTest {
   public RequestResponsePact shouldHavePactWithOurProvider(final PactDslWithProvider builder) {
     final Map json = new HashMap<>();
     json.put("test", "NO");
-    json.put("date", "2013-08-16T15:31:20+10:00");
+    json.put("date", "2013-08-16T15:31:20Z");
     json.put("count", 100);
     builder.given("data count > 0",json);
+    // TODO: This fails if we don't do this with a weird encoding error on the
+    //       provider tests...
+    final String dateString = date.atOffset(ZoneOffset.UTC).toString();
     return builder.uponReceiving("a request for json data")
             .method("GET")
             .path("/provider.json")
-            .matchQuery("validDate", date.toString())
+            .matchQuery("validDate", dateString)
             .willRespondWith().status(200)
-            .body("{\"test\": \"NO\", \"validDate\": \"2013-08-16T15:31:20+10:00\", \"count\": 100}")
+            .body("{\"test\": \"NO\", \"validDate\": \"2013-08-16T15:31:20Z\", \"count\": 100}")
             .toPact();
   }
 
@@ -80,12 +85,12 @@ public class ClientPactTest {
   }
 
   @Pact(provider="TestProvider", consumer="ExampleClient")
-  public RequestResponsePact shouldHandleNoData(final PactDslWithProvider builder) {
+  public RequestResponsePact shouldHandleNoData(final PactDslWithProvider builder) throws IOException {
     return builder.given("data count == 0")
             .uponReceiving("a request for json data")
             .method("GET")
             .path("/provider.json")
-            .matchQuery("validDate", date.toString())
+            .matchQuery("validDate", date.atOffset(ZoneOffset.UTC).toString())
             .willRespondWith()
             .status(404)
             .toPact();
@@ -94,10 +99,10 @@ public class ClientPactTest {
   @Test
   @PactVerification(value = "TestProvider", fragment = "shouldHavePactWithOurProvider")
   public void runTestShouldHavePactWithOurProvider() throws Exception {
-    final List<Object> output = client.fetchAndProcessData(date.toString());
+    final List<Object> output = client.fetchAndProcessData(date.atOffset(ZoneOffset.UTC).toString());
     assertThat(output, hasSize(2));
     assertThat(output.get(0), is(1));
-    assertThat(output.get(1), is(equalTo(OffsetDateTime.parse("2013-08-16T15:31:20+10:00", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX")))));
+    assertThat(output.get(1), is(equalTo(OffsetDateTime.parse("2013-08-16T15:31:20Z", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX")))));
   }
 
   @Test
@@ -119,7 +124,7 @@ public class ClientPactTest {
   @Test
   @PactVerification(value = "TestProvider", fragment = "shouldHandleNoData")
   public void runTestShouldHandleNoDataCheck() throws Exception {
-    final List<Object> output = client.fetchAndProcessData(date.toString());
+    final List<Object> output = client.fetchAndProcessData(date.atOffset(ZoneOffset.UTC).toString());
     assertThat(output, hasSize(2));
   }
 
