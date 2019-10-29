@@ -45,12 +45,11 @@ public class ClientPactTest {
     json.put("date", "2013-08-16T15:31:20Z");
     json.put("count", 100);
     builder.given("data count > 0",json);
-    // TODO: This fails if we don't do this with a weird encoding error on the
-    //       provider tests...
     final String dateString = "2013-08-16T15:31:20Z";
     return builder.uponReceiving("a request for json data")
             .method("GET")
             .path("/provider.json")
+             // NOTE: Need to be sure that you escape chars which are part of RegEx
             .matchQuery("validDate", dateString.replace(".", "\\."))
             .willRespondWith().status(200)
             .body("{\"test\": \"NO\", \"validDate\": \"2013-08-16T15:31:20Z\", \"count\": 100}")
@@ -76,6 +75,7 @@ public class ClientPactTest {
             .uponReceiving("a request with a missing date parameter")
             .method("GET")
             .path("/provider.json")
+             // NOTE: Need to be sure that you escape chars which are part of RegEx
             .matchQuery("validDate", "This is not a date")
             .willRespondWith()
             .status(400)
