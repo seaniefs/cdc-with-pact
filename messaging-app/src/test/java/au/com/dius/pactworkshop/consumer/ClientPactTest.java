@@ -1,10 +1,10 @@
 package au.com.dius.pactworkshop.consumer;
 
-import au.com.dius.pact.consumer.Pact;
-import au.com.dius.pact.consumer.PactProviderRuleMk2;
-import au.com.dius.pact.consumer.PactVerification;
+import au.com.dius.pact.consumer.junit.PactProviderRule;
+import au.com.dius.pact.consumer.junit.PactVerification;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
-import au.com.dius.pact.model.RequestResponsePact;
+import au.com.dius.pact.core.model.RequestResponsePact;
+import au.com.dius.pact.core.model.annotations.Pact;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,7 +30,7 @@ public class ClientPactTest {
   private LocalDateTime date = LocalDateTime.now();
 
   @Rule
-  public PactProviderRuleMk2 provider = new PactProviderRuleMk2("TestProvider", null,
+  public PactProviderRule provider = new PactProviderRule("TestProvider", null,
           1234, this);
 
   @Before
@@ -44,9 +44,9 @@ public class ClientPactTest {
     json.put("test", "NO");
     json.put("date", "2013-08-16T15:31:20Z");
     json.put("count", 100);
-    builder.given("data count > 0",json);
     final String dateString = "2013-08-16T15:31:20Z";
-    return builder.uponReceiving("a request for json data")
+    return builder.given("data count > 0",json)
+            .uponReceiving("a request for json data")
             .method("GET")
             .path("/provider.json")
              // NOTE: Need to be sure that you escape chars which are part of RegEx
