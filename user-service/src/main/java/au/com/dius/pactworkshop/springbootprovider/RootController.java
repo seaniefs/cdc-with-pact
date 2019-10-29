@@ -20,10 +20,10 @@ public class RootController {
     if (validDate != null && validDate.trim().length() > 0) {
       if (DataStore.INSTANCE.getDataCount() > 0) {
         try {
-          LocalDateTime validTime = LocalDateTime.parse(validDate);
+          OffsetDateTime validTime = OffsetDateTime.parse(validDate);
           Map<String, Serializable> map = new HashMap<>(3);
           map.put("test", "NO");
-          map.put("validDate", OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX")));
+          map.put("validDate", validDate);
           map.put("count", DataStore.INSTANCE.getDataCount());
           return map;
         } catch (DateTimeParseException e) {
