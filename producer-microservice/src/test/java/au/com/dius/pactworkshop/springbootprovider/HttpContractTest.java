@@ -17,9 +17,9 @@ import org.springframework.test.context.ActiveProfiles;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @RunWith(SpringRestPactRunner.class)
-@Provider("TestProvider")
-@PactBroker(host = "127.0.0.1", port = "9292", authentication =
-    @PactBrokerAuth(username = "pacttest", password = "pacttest")
+@Provider("ProviderMicroservice")
+@PactBroker(scheme = "${pactbroker.scheme}", host = "${pactbroker.host}", port = "${pactbroker.port}", authentication =
+    @PactBrokerAuth(username = "${pactbroker.auth.username}", password = "${pactbroker.auth.password}")
 )
 @VerificationReports("console")
 @SpringBootTest(classes = MainApplication.class, webEnvironment = RANDOM_PORT)

@@ -30,7 +30,7 @@ public class ClientPactTest {
   private LocalDateTime date = LocalDateTime.now();
 
   @Rule
-  public PactProviderRule provider = new PactProviderRule("TestProvider", null,
+  public PactProviderRule provider = new PactProviderRule("ProviderMicroservice", null,
           1234, this);
 
   @Before
@@ -38,7 +38,7 @@ public class ClientPactTest {
     client = new Client("http://localhost:1234");
   }
 
-  @Pact(provider="TestProvider", consumer="ExampleClient")
+  @Pact(provider="ProviderMicroservice", consumer="ConsumerApp")
   public RequestResponsePact shouldHavePactWithOurProvider(final PactDslWithProvider builder) {
     final Map json = new HashMap<>();
     json.put("test", "NO");
@@ -56,7 +56,7 @@ public class ClientPactTest {
             .toPact();
   }
 
-  @Pact(provider="TestProvider", consumer="ExampleClient")
+  @Pact(provider="ProviderMicroservice", consumer="ConsumerApp")
   public RequestResponsePact shouldHandleMissingDateParameter(final PactDslWithProvider builder) {
     return builder.given("data count > 0")
                   .uponReceiving("a request with a missing date parameter")
@@ -69,7 +69,7 @@ public class ClientPactTest {
                   .toPact();
   }
 
-  @Pact(provider="TestProvider", consumer="ExampleClient")
+  @Pact(provider="ProviderMicroservice", consumer="ConsumerApp")
   public RequestResponsePact shouldHandleInvalidDateParameter(final PactDslWithProvider builder) {
     return builder.given("data count > 0")
             .uponReceiving("a request with a missing date parameter")
@@ -84,7 +84,7 @@ public class ClientPactTest {
             .toPact();
   }
 
-  @Pact(provider="TestProvider", consumer="ExampleClient")
+  @Pact(provider="ProviderMicroservice", consumer="ConsumerApp")
   public RequestResponsePact shouldHandleNoData(final PactDslWithProvider builder) throws IOException {
     final String dateString = date.atOffset(ZoneOffset.UTC).toString();
     return builder.given("data count == 0")
@@ -98,7 +98,7 @@ public class ClientPactTest {
   }
 
   @Test
-  @PactVerification(value = "TestProvider", fragment = "shouldHavePactWithOurProvider")
+  @PactVerification(value = "ProviderMicroservice", fragment = "shouldHavePactWithOurProvider")
   public void runTestShouldHavePactWithOurProvider() throws Exception {
     final String dateString = "2013-08-16T15:31:20Z";
     final List<Object> output = client.fetchAndProcessData(dateString);
@@ -108,7 +108,7 @@ public class ClientPactTest {
   }
 
   @Test
-  @PactVerification(value = "TestProvider", fragment = "shouldHandleMissingDateParameter")
+  @PactVerification(value = "ProviderMicroservice", fragment = "shouldHandleMissingDateParameter")
   public void runTestShouldHandleMissingDateParameterCheck() throws Exception {
     final List<Object> output = client.fetchAndProcessData(null);
     assertThat(output, hasSize(2));
@@ -117,14 +117,14 @@ public class ClientPactTest {
   }
 
   @Test
-  @PactVerification(value = "TestProvider", fragment = "shouldHandleInvalidDateParameter")
+  @PactVerification(value = "ProviderMicroservice", fragment = "shouldHandleInvalidDateParameter")
   public void runTestShouldHandleInvalidDateParameterCheck() throws Exception {
     final List<Object> output = client.fetchAndProcessData("This is not a date");
     assertThat(output, hasSize(2));
   }
 
   @Test
-  @PactVerification(value = "TestProvider", fragment = "shouldHandleNoData")
+  @PactVerification(value = "ProviderMicroservice", fragment = "shouldHandleNoData")
   public void runTestShouldHandleNoDataCheck() throws Exception {
     final String dateString = date.atOffset(ZoneOffset.UTC).toString();
     final List<Object> output = client.fetchAndProcessData(dateString);

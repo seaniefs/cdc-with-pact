@@ -68,11 +68,10 @@
         <artifactId>pact-jvm-provider-maven</artifactId>
         <version>${pact.version}</version>
         <configuration>
-          <!-- pact_broker is the service name in docker-compose -->
-          <pactBrokerUrl>http://127.0.0.1:9292</pactBrokerUrl>
-          <pactBrokerUsername>pacttest</pactBrokerUsername>
-          <pactBrokerPassword>pacttest</pactBrokerPassword>
-          <projectVersion>${pact.consumer.version}</projectVersion>
+          <pactBrokerUrl>${pactbroker.scheme}://${pactbroker.host}:${pactbroker.port}</pactBrokerUrl>
+          <pactBrokerUsername>${pactbroker.auth.username}</pactBrokerUsername>
+          <pactBrokerPassword>${pactbroker.auth.password}</pactBrokerPassword>
+          <projectVersion>${project.version}</projectVersion>
           <tags>
             <tag>DEV</tag>
           </tags>

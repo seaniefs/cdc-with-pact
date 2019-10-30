@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>au.com.dius.pactworkshop.consumer</groupId>
-  <artifactId>user-service</artifactId>
+  <artifactId>producer-microservice</artifactId>
   <version>1.0.0-SNAPSHOT</version>
 
   <parent>
@@ -48,12 +48,12 @@
         <artifactId>pact-jvm-provider-spring</artifactId>
         <version>${pact.version}</version>
         <configuration>
-          <pactBrokerUrl>http://127.0.0.1:9292</pactBrokerUrl>
-          <pactBrokerUsername>pacttest</pactBrokerUsername>
-          <pactBrokerPassword>pacttest</pactBrokerPassword>
+          <pactBrokerUrl>${pactbroker.scheme}://${pactbroker.host}:${pactbroker.port}</pactBrokerUrl>
+          <pactBrokerUsername>${pactbroker.auth.username}</pactBrokerUsername>
+          <pactBrokerPassword>${pactbroker.auth.password}</pactBrokerPassword>
           <serviceProviders>
             <serviceProvider>
-              <name>TestProvider</name>
+              <name>ProviderMicroservice</name>
               <verificationType>ANNOTATED_METHOD</verificationType>
               <!-- packagesToScan is optional, but leaving it out will result in the entire
               test classpath being scanned. Set it to the packages where your annotated test method
